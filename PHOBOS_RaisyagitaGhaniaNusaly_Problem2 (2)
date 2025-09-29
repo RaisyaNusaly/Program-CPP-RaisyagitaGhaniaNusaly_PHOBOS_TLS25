@@ -1,0 +1,55 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+using namespace std;
+
+bool isVowel(char c) {
+    return c=='a'||c=='e'||c=='i'||c=='o'||c=='u'||
+           c=='A'||c=='E'||c=='I'||c=='O'||c=='U';
+}
+
+// manual reverse (no std::reverse)
+void manualReverse(string &s) {
+    int i = 0, j = (int)s.size() - 1;
+    while (i < j) {
+        char t = s[i];
+        s[i] = s[j];
+        s[j] = t;
+        i++; j--;
+    }
+}
+
+int main() {
+    string pwd;
+    if (!getline(cin, pwd)) return 0;
+
+    manualReverse(pwd);                
+
+    string result;
+    for (size_t i = 0; i < pwd.size(); ) {
+        if (isdigit(static_cast<unsigned char>(pwd[i]))) {
+            // collect full number
+            size_t j = i;
+            while (j < pwd.size() && isdigit(static_cast<unsigned char>(pwd[j]))) j++;
+            string digits = pwd.substr(i, j - i);
+
+            // convert to int (ASCII), then to char
+            int ascii = 0;
+            for (size_t k = 0; k < digits.size(); ++k) {
+                ascii = ascii * 10 + (digits[k] - '0');
+            }
+            char ch = static_cast<char>(ascii);
+
+            // keep only if not a vowel
+            if (!isVowel(ch)) result += ch;
+
+            i = j; // move past the digits
+        } else {
+            result += pwd[i];
+            i++;
+        }
+    }
+
+    cout << result << "\n";
+    return 0;
+}
